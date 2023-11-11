@@ -1,0 +1,3 @@
+src/package/demo.txt
+src/dest/pants.file
+src/info/hello

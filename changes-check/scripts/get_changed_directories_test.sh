@@ -51,14 +51,11 @@ fi
 
 echo -n "testing get changed double nested..........................."
 CHANGED_DIRECTORIES=$(cat ../data/file-list-nested.txt | ./get_changed_directories.sh "src/package/" "" "")
-echo $CHANGED_DIRECTORIES
 COUNT=$(echo $CHANGED_DIRECTORIES | jq length)
 echo $CHANGED_DIRECTORIES | jq -e '.[]|select(. == "src/package/rooster")' > /dev/null
 HAS_ROOSTER=$?
-echo $CHANGED_DIRECTORIES | jq -e '.[]|select(. == "src/module/caculator")' > /dev/null
+echo $CHANGED_DIRECTORIES | jq -e '.[]|select(. == "src/package/calculator")' > /dev/null
 HAS_CALCULATOR=$?
-echo $CHANGED_DIRECTORIES | jq -e '.[]|select(. == "src/list")' > /dev/null
-HAS_LIST=$?
 if [ "$COUNT" != "2" ] || [ "$HAS_ROOSTER" != "0" ] || [ "$HAS_CALCULATOR" != "0" ]
 then
     EXIT_CODE=1
@@ -67,4 +64,44 @@ else
     echo "pass"
 fi
 
+echo -n "testing get changed include filter.........................."
+CHANGED_DIRECTORIES=$(cat ../data/file-list-nested.txt | ./get_changed_directories.sh "src/package/" "*.java" "")
+COUNT=$(echo $CHANGED_DIRECTORIES | jq length)
+echo $CHANGED_DIRECTORIES | jq -e '.[]|select(. == "src/package/rooster")' > /dev/null
+HAS_ROOSTER=$?
+if [ "$COUNT" != "1" ] || [ "$HAS_ROOSTER" != "0" ]
+then
+    EXIT_CODE=1
+    echo "fail"
+else
+    echo "pass"
+fi
+
+echo -n "testing get changed multiple include filters................"
+CHANGED_DIRECTORIES=$(cat ../data/file-list-multi.txt | ./get_changed_directories.sh "src/" "*.txt *pants*" "")
+COUNT=$(echo $CHANGED_DIRECTORIES | jq length)
+echo $CHANGED_DIRECTORIES | jq -e '.[]|select(. == "src/package")' > /dev/null
+HAS_PAGCKAGE=$?
+echo $CHANGED_DIRECTORIES | jq -e '.[]|select(. == "src/dest")' > /dev/null
+HAS_DEST=$?
+if [ "$COUNT" != "2" ] || [ "$HAS_ROOSTER" != "0" ]
+then
+    EXIT_CODE=1
+    echo "fail"
+else
+    echo "pass"
+fi
+
+echo -n "testing get changed exclude filter.........................."
+CHANGED_DIRECTORIES=$(cat ../data/file-list-multi.txt | ./get_changed_directories.sh "src/" "" "*.txt *pants*")
+COUNT=$(echo $CHANGED_DIRECTORIES | jq length)
+echo $CHANGED_DIRECTORIES | jq -e '.[]|select(. == "src/info")' > /dev/null
+HAS_INFO=$?
+if [ "$COUNT" != "1" ] || [ "$HAS_INFO" != "0" ]
+then
+    EXIT_CODE=1
+    echo "fail"
+else
+    echo "pass"
+fi
 exit $EXIT_CODE
