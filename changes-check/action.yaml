@@ -1,0 +1,23 @@
+name: check for directories containing changes
+description: indicate whether or not a given path has changes
+inputs:
+  path_prefix:
+    description: path prefix to directories
+    default: ""
+  include:
+    description: glob pattern used to include files
+    default: ""
+  exclude:
+    description: glob pattern used to exclude files
+    default: ""
+outputs:
+  directories:
+    description: json list of all directories containing changes
+    value: ${{ steps.get_changed_directories.outputs.directories }}
+runs:
+  using: composite
+  steps:
+  - id: get_changed_directories
+    name: get changed directories
+    shell: bash
+    run: ./scripts/get_changed_directories.sh "${{ inputs.base_path }}" "${{ inputs.include }}" "${{ inputs.exclude }}"
