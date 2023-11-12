@@ -1,0 +1,30 @@
+name: execute integration tasks
+
+on:
+  push:
+    branches:
+    - "**"
+
+jobs:
+  evaluate-changed-items:
+    runs-on: ubuntu-22.04
+    name: evaluate changed items
+    outputs:
+      directories: ${{ steps.check-changes.outputs.directories }}
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    - id: check-changes
+      uses: hashibuto/github-actions/changes-check@test
+
+  execute_integration_tasks:
+    needs: evaluate-changed-items
+    strategy: 
+      matrix:
+        directory: ${{ fromJson(needs.evaluate-changed-items.outputs.directories) }}
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0 

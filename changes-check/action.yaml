@@ -5,10 +5,10 @@ inputs:
     description: path prefix to directories, including the final preceding slash (eg. /src/project/)
     default: ""
   include:
-    description: glob pattern used to include files
+    description: glob pattern used to include files, space delimited for multiple patterns
     default: ""
   exclude:
-    description: glob pattern used to exclude files
+    description: glob pattern used to exclude files, space delimited for multiple patterns
     default: ""
 outputs:
   directories:
