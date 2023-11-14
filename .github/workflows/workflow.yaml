@@ -20,6 +20,7 @@ jobs:
       uses: hashibuto/github-actions/changes-check@test
 
   execute_integration_tasks:
+    runs-on: ubuntu-22.04
     needs: evaluate-changed-items
     strategy: 
       matrix:
