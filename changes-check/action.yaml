@@ -20,4 +20,6 @@ runs:
   - id: get_changed_directories
     name: get changed directories
     shell: bash
-    run: ./scripts/get_changed_directories.sh "${{ inputs.base_path }}" "${{ inputs.include }}" "${{ inputs.exclude }}"
+    run: |
+      find / -name get_changed_directories.sh
+      ./scripts/get_changed_directories.sh "${{ inputs.base_path }}" "${{ inputs.include }}" "${{ inputs.exclude }}"
