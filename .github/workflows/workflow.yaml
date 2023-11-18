@@ -17,7 +17,6 @@ jobs:
         fetch-depth: 0
     - id: check-changes
       uses: hashibuto/github-actions/changes-check@test
-    - run: echo ${{ outputs.directories }}
 
   execute_integration_tasks:
     runs-on: ubuntu-22.04
@@ -34,4 +33,4 @@ jobs:
 
     - name: print directory name
       shell: bash
-      run: echo ${{ matrix.directory }}
+      run: echo ${{ needs.evaluate-changed-items.outputs.directories }}
