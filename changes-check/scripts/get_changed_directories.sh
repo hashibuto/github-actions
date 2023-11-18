@@ -75,5 +75,11 @@ do
     CHANGED_DIRS[${#CHANGED_DIRS[@]}]=$DIRNAME
 done
 
+if [ ${#CHANGED_DIRS[@]} -eq 0 ]
+then
+    echo "[]"
+    exit
+fi
+
 # convert array to json list
 printf '%s\n' "${CHANGED_DIRS[@]}" | jq -R . | jq -cs .

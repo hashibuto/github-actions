@@ -104,4 +104,15 @@ then
 else
     echo "pass"
 fi
+
+echo -n "testing empty input list...................................."
+CHANGED_DIRECTORIES=$(echo "" | ./get_changed_directories.sh "" "" "")
+COUNT=$(echo $CHANGED_DIRECTORIES | jq length)
+if [ "$COUNT" != "0" ]
+then
+    EXIT_CODE=1
+    echo "fail"
+else
+    echo "pass"
+fi
 exit $EXIT_CODE
