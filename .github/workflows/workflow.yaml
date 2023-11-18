@@ -11,7 +11,6 @@ jobs:
     name: evaluate changed items
     outputs:
       directories: ${{ steps.check-changes.outputs.directories }}
-
     steps:
     - uses: actions/checkout@v4
       with:
@@ -21,7 +20,7 @@ jobs:
 
   execute_integration_tasks:
     runs-on: ubuntu-22.04
-    name: ${{ matrix.directory }}
+    name: execute integration tasks
     needs: evaluate-changed-items
     strategy: 
       matrix:
@@ -30,3 +29,7 @@ jobs:
     - uses: actions/checkout@v4
       with:
         fetch-depth: 0 
+
+    - name: print directory name
+      shell: bash
+      run: echo ${{ matrix.directory }}
