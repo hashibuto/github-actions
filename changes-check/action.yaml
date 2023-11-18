@@ -21,7 +21,5 @@ runs:
     name: get changed directories
     shell: bash
     run: |
-      echo $GITHUB_ACTION_PATH
-      # /home/runner/work/github-actions/github-actions/changes-check/scripts/get_changed_directories.sh
-      find / -name get_changed_directories.sh
-      ./scripts/get_changed_directories.sh "${{ inputs.base_path }}" "${{ inputs.include }}" "${{ inputs.exclude }}"
+      printf directories=$($GITHUB_ACTION_PATH/scripts/get_changed_directories.sh "${{ inputs.base_path }}" "${{ inputs.include }}" "${{ inputs.exclude }}") >> $GITHUB_OUTPUT
+

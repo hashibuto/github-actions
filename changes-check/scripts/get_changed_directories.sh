@@ -75,4 +75,4 @@ do
 done
 
 # convert array to json list
-printf '%s\n' "${CHANGED_DIRS[@]}" | jq -R . | jq -s .
+printf '%s\n' "${CHANGED_DIRS[@]}" | jq -R . | jq -cs .
