@@ -9,6 +9,7 @@ CHANGED_DIRS=()
 FILE_LIST=$(cat)
 for CHANGED in $FILE_LIST
 do
+    echo $FILE_LIST
     if [ "$INCLUDE" != "" ]
     then
         read -r -a INCLUDE_ARR <<< $INCLUDE
