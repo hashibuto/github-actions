@@ -21,6 +21,7 @@ jobs:
   execute_integration_tasks:
     runs-on: ubuntu-22.04
     if: needs.evaluate-changed-items.outputs.directories != '[]'
+    name: running
     needs: evaluate-changed-items
     strategy: 
       matrix:
