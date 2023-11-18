@@ -17,6 +17,7 @@ jobs:
         fetch-depth: 0
     - id: check-changes
       uses: hashibuto/github-actions/changes-check@test
+    - run: echo ${{ evaluate-changed-items.outputs.directories }}
 
   execute_integration_tasks:
     runs-on: ubuntu-22.04
