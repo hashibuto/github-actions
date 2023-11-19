@@ -34,7 +34,7 @@ runs:
       then
         echo "compare tag doesn't exist yet"
         echo "COMPARE_TAG_EXISTS=0" >> $GITHUB_ENV
-        echo "BASE_SHA=$(git rev-parse ${{ inputs.base_branch }})" >> GITHUB_ENV
+        echo "BASE_SHA=$(git rev-parse origin/${{ inputs.base_branch }})" >> GITHUB_ENV
       else
         echo "compare tag exists"
         echo "COMPARE_TAG_EXISTS=1" >> $GITHUB_ENV
@@ -48,7 +48,7 @@ runs:
           owner: context.repo.owner,
           repo: context.repo.repo,
           ref: "refs/tags/${{ inputs.compare_tag }}",
-          sha: "origin/${{ env.BASE_SHA }}"
+          sha: "${{ env.BASE_SHA }}"
         })
   - id: get_changed_directories
     name: get changed directories
