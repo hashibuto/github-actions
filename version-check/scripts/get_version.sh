@@ -4,17 +4,6 @@ FILENAME="$1"
 OCCURRENCE="$2"
 EXPRESSION="$3"
 
-if [[ $FILENAME != .* ]]
-then
-    FILENAME="./$FILENAME"
-fi
-
-if [ ! -f "$FILENAME" ]
-then
-    VERSION=""
-    exit
-fi
-
 if [ "$EXPRESSION" == "" ]
 then
     VERSION=$(cat $FILENAME)

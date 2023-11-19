@@ -39,6 +39,8 @@ jobs:
 
     - id: check-version
       uses: hashibuto/github-actions/version-check@test
+      with:
+        path-prefix: ${{ matrix.directory }}/
 
     - name: Execute tests
       shell: bash

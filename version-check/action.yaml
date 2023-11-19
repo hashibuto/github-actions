@@ -13,6 +13,9 @@ inputs:
   tag-prefix:
     description: prefix used to create tag from version
     default: ""
+  path-prefix:
+    description: path prefix used to location version file
+    default: ""
 outputs:
   version:
     description: version which was provided in the supplied version file
@@ -28,7 +31,7 @@ runs:
     name: read version file
     shell: bash
     run: |
-      VERSION=$($GITHUB_ACTION_PATH/scripts/get_version.sh "${{ inputs.filename }}" "${{ inputs.occurrence }}" "${{ inputs.expression }}")
+      VERSION=$($GITHUB_ACTION_PATH/scripts/get_version.sh "${{ inputs.path-prefix }}${{ inputs.filename }}" "${{ inputs.occurrence }}" "${{ inputs.expression }}")
       if [ "$VERSION" == "" ]
       then
         echo "Version could not be determined from file named: ${{ inputs.filename }}"
