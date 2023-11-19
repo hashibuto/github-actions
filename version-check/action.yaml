@@ -28,11 +28,11 @@ runs:
     name: read version file
     shell: bash
     run: |
-      VERSION=$(./scripts/get_version.sh "${{ inputs.filename }}" "${{ inputs.occurrence }}" "${{ inputs.expression }}")
+      VERSION=$($GITHUB_ACTION_PATH/scripts/get_version.sh "${{ inputs.filename }}" "${{ inputs.occurrence }}" "${{ inputs.expression }}")
       echo "version=${{ inputs.tag-prefix }}${VERSION}" >> "$GITHUB_OUTPUT"
       echo "dev-version=${{ inputs.tag-prefix }}${VERSION}.dev$((16#$(git rev-parse --short HEAD)))" >> "$GITHUB_OUTPUT"
   - id: check-version-ok
     name: check if version is ok for tagging
     shell: bash
-    run: ./scripts/check_tag_exists.sh "${{ steps.read-version-file.version }}"
+    run: $GITHUB_ACTION_PATH/scripts/check_tag_exists.sh "${{ steps.read-version-file.version }}"
        
