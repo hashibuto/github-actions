@@ -62,7 +62,7 @@ do
     fi
 
     SUFFIX=$(echo $ITEM | cut -d "/" -f 1)
-    if [ "$INCLUDE_HIDDEN" == "false" ] && [[ "$SUFFIX" == "."*  ]]
+    if [ "$INCLUDE_HIDDEN" == "false" ] && [[ "$SUFFIX" == .*  ]]
     then
         continue
     fi
