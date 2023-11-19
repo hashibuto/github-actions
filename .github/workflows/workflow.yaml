@@ -19,13 +19,17 @@ jobs:
       uses: hashibuto/github-actions/changes-check@test
 
   execute_integration_tasks:
+    strategy: 
+      matrix:
+        directory: ${{ fromJson(needs.evaluate-changed-items.outputs.directories) }}  
+    defaults:
+      run:
+        working-directory:
+          ${{ matrix.directory }}
     runs-on: ubuntu-22.04
     if: needs.evaluate-changed-items.outputs.directories != '[]'
     name: running
     needs: evaluate-changed-items
-    strategy: 
-      matrix:
-        directory: ${{ fromJson(needs.evaluate-changed-items.outputs.directories) }}
     steps:
     - uses: actions/checkout@v4
       with:
