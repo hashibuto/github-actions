@@ -31,7 +31,12 @@ runs:
     name: read version file
     shell: bash
     run: |
-      VERSION=$($GITHUB_ACTION_PATH/scripts/get_version.sh "${{ inputs.path-prefix }}${{ inputs.filename }}" "${{ inputs.occurrence }}" "${{ inputs.expression }}")
+      PATH_PREFIX="${{ inputs.path-prefix }}"
+      if [[ "$PATH_PREFIX" != */ ]]
+      then
+        PATH_PREFIX=${PATH_PREFIX}/
+      fi
+      VERSION=$($GITHUB_ACTION_PATH/scripts/get_version.sh "${{ PATH_PREFIX }}${{ inputs.filename }}" "${{ inputs.occurrence }}" "${{ inputs.expression }}")
       if [ "$VERSION" == "" ]
       then
         echo "Version could not be determined from file named: ${{ inputs.filename }}"
