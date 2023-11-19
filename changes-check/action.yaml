@@ -36,7 +36,7 @@ runs:
         BASE_REV=$(git rev-parse origin/${{ inputs.base_branch }})
         echo "base = $BASE_REV"
         echo "COMPARE_TAG_EXISTS=0" >> $GITHUB_ENV
-        echo "BASE_SHA=$BASE_REV" >> GITHUB_ENV
+        echo "BASE_SHA=$BASE_REV" >> $GITHUB_ENV
       else
         echo "compare tag exists"
         echo "COMPARE_TAG_EXISTS=1" >> $GITHUB_ENV
