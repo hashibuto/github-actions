@@ -37,6 +37,9 @@ jobs:
       with:
         fetch-depth: 0 
 
+    - id: check-version
+      uses: hashibuto/github-actions/version-check@test
+
     - name: Execute tests
       shell: bash
       run: make test

@@ -16,22 +16,23 @@ inputs:
 outputs:
   version:
     description: version which was provided in the supplied version file
-    value: ${{ steps.read_version_file.outputs.version }}
+    value: ${{ steps.read-version-file.outputs.version }}
   dev-version:
     description: version which was provided in the supplied version file, with a .devN suffix based on the short commit hash
-    value: ${{ steps.read_version_file.outputs.dev-version }}
+    value: ${{ steps.read-version-file.outputs.dev-version }}
+
 runs:
   using: composite
   steps:
-  - id: read_version_file
+  - id: read-version-file
     name: read version file
     shell: bash
     run: |
       VERSION=$(./scripts/get_version.sh "${{ inputs.filename }}" "${{ inputs.occurrence }}" "${{ inputs.expression }}")
-      echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
-      echo "dev-version=${VERSION}.dev$((16#$(git rev-parse --short HEAD)))" >> "$GITHUB_OUTPUT"
-  - id: check_tag_exists
-    name: check if version tag exists
+      echo "version=${{ inputs.tag-prefix }}${VERSION}" >> "$GITHUB_OUTPUT"
+      echo "dev-version=${{ inputs.tag-prefix }}${VERSION}.dev$((16#$(git rev-parse --short HEAD)))" >> "$GITHUB_OUTPUT"
+  - id: check-version-ok
+    name: check if version is ok for tagging
     shell: bash
-    run: ./scripts/check_tag_exists.sh "${{ steps.read_version_file.version }}" 
+    run: ./scripts/check_tag_exists.sh "${{ steps.read-version-file.version }}"
        
