@@ -13,6 +13,12 @@ inputs:
   include_hidden:
     description: include hidden directories
     default: false
+  base_branch:
+    description: base branch against which to compare current revision
+    default: main
+  compare_tag: 
+    description: tag against which to compare current revision
+    default: base
 outputs:
   directories:
     description: json list of all directories containing changes
@@ -20,9 +26,32 @@ outputs:
 runs:
   using: composite
   steps:
+  - name: ensure existance of compare tag
+    shell: bash
+    run: |
+      git tag -l ${{ inputs.compare_tag }} | grep ${{ inputs.compare_tag }}
+      if [ "$?" != "0" ]
+      then
+        echo "compare tag doesn't exist yet"
+        echo "COMPARE_TAG_EXISTS=0" >> $GITHUB_ENV
+      else
+        echo "compare tag exists"
+        echo "COMPARE_TAG_EXISTS=1" >> $GITHUB_ENV
+      fi
+  - name: create compare tag
+    if: env.COMPARE_TAG_EXISTS == '0'
+    uses: actions/github-script@v5
+      with:
+        script: |
+          github.rest.git.createRef({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            ref: refs/tags/${{ inputs.compare_tag }},
+            sha: origin/${{ inputs.base_branch }}
+          })
   - id: get_changed_directories
     name: get changed directories
     shell: bash
     run: |
-      printf directories=$(git diff --name-only origin/master ${{ github.sha }} | $GITHUB_ACTION_PATH/scripts/get_changed_directories.sh "${{ inputs.base_path }}" "${{ inputs.include }}" "${{ inputs.exclude }}" "${{ inputs.include_hidden }}") >> $GITHUB_OUTPUT
+      printf directories=$(git diff --name-only origin/${{ inputs.base_branch }} ${{ github.sha }} | $GITHUB_ACTION_PATH/scripts/get_changed_directories.sh "${{ inputs.base_path }}" "${{ inputs.include }}" "${{ inputs.exclude }}" "${{ inputs.include_hidden }}") >> $GITHUB_OUTPUT
 

@@ -8,7 +8,7 @@ on:
 jobs:
   evaluate-changed-items:
     runs-on: ubuntu-22.04
-    name: evaluate changed items
+    name: Evaluate changed items
     outputs:
       directories: ${{ steps.check-changes.outputs.directories }}
     steps:
@@ -28,13 +28,13 @@ jobs:
           ${{ matrix.directory }}
     runs-on: ubuntu-22.04
     if: needs.evaluate-changed-items.outputs.directories != '[]'
-    name: running
+    name: Running
     needs: evaluate-changed-items
     steps:
     - uses: actions/checkout@v4
       with:
         fetch-depth: 0 
 
-    - name: execute tests
+    - name: Execute tests
       shell: bash
       run: make test
