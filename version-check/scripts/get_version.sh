@@ -4,10 +4,15 @@ FILENAME="$1"
 OCCURRENCE="$2"
 EXPRESSION="$3"
 
+if [[ $FILENAME != .* ]]
+then
+    FILENAME="./$FILENAME"
+fi
+
 if [ ! -f "$FILENAME" ]
 then
-    echo "The version file $FILENAME does not exist"
-    exit 1
+    VERSION=""
+    exit
 fi
 
 if [ "$EXPRESSION" == "" ]
