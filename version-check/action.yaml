@@ -31,7 +31,8 @@ runs:
       VERSION=$($GITHUB_ACTION_PATH/scripts/get_version.sh "${{ inputs.filename }}" "${{ inputs.occurrence }}" "${{ inputs.expression }}")
       if [ "$VERSION" == "" ]
       then
-        echo "Version could not be determined from ${{ inputs.filename }}"
+        echo "Version could not be determined from file named: ${{ inputs.filename }}"
+        exit 1
       fi
       echo "version=${{ inputs.tag-prefix }}${VERSION}" >> "$GITHUB_OUTPUT"
       echo "dev-version=${{ inputs.tag-prefix }}${VERSION}.dev$((16#$(git rev-parse --short HEAD)))" >> "$GITHUB_OUTPUT"
