@@ -36,7 +36,7 @@ runs:
       then
         PATH_PREFIX=${PATH_PREFIX}/
       fi
-      VERSION=$($GITHUB_ACTION_PATH/scripts/get_version.sh "${{ PATH_PREFIX }}${{ inputs.filename }}" "${{ inputs.occurrence }}" "${{ inputs.expression }}")
+      VERSION=$($GITHUB_ACTION_PATH/scripts/get_version.sh "${PATH_PREFIX}${{ inputs.filename }}" "${{ inputs.occurrence }}" "${{ inputs.expression }}")
       if [ "$VERSION" == "" ]
       then
         echo "Version could not be determined from file named: ${{ inputs.filename }}"
