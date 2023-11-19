@@ -48,12 +48,13 @@ jobs:
 
   branch_protection_funnel:
     runs-on: ubuntu-22.04
+    name: Verify integration tasks
     needs: execute_integration_tasks
     if: always()
     steps:
-    - name: All checks ok
+    - name: Integration tasks succeeded
       if: ${{ !(contains(needs.*.result, 'failure')) }}
-        run: exit 0
-      - name: Some tests failed
-        if: ${{ contains(needs.*.result, 'failure') }}
-        run: exit 1
+      run: exit 0
+    - name: Integration tasks failed
+      if: ${{ contains(needs.*.result, 'failure') }}
+      run: exit 1
