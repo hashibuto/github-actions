@@ -17,6 +17,8 @@ jobs:
         fetch-depth: 0
     - id: check-changes
       uses: hashibuto/github-actions/changes-check@test
+      with:
+        base_branch: master
 
   execute_integration_tasks:
     strategy: 
