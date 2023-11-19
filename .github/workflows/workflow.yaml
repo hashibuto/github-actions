@@ -30,7 +30,7 @@ jobs:
           ${{ matrix.directory }}
     runs-on: ubuntu-22.04
     if: needs.evaluate-changed-items.outputs.directories != '[]'
-    name: Running
+    name: Verify changes
     needs: evaluate-changed-items
     steps:
     - uses: actions/checkout@v4

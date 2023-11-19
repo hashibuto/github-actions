@@ -41,6 +41,8 @@ runs:
       then
         echo "Version file $FILENAME does not exist at the specified location"
         exit 1
+      else
+        echo "Version file $FILENAME was located"
       fi
       VERSION=$($GITHUB_ACTION_PATH/scripts/get_version.sh "$FILENAME" "${{ inputs.occurrence }}" "${{ inputs.expression }}")
       if [ "$VERSION" == "" ]
