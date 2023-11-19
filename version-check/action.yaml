@@ -36,7 +36,13 @@ runs:
       then
         PATH_PREFIX=${PATH_PREFIX}/
       fi
-      VERSION=$($GITHUB_ACTION_PATH/scripts/get_version.sh "${PATH_PREFIX}${{ inputs.filename }}" "${{ inputs.occurrence }}" "${{ inputs.expression }}")
+      FILENAME="${PATH_PREFIX}${{ inputs.filename }}"
+      if [ ! -f "$FILENAME" ]
+      then
+        echo "Version file $FILENAME does not exist at the specified location"
+        exit 1
+      fi
+      VERSION=$($GITHUB_ACTION_PATH/scripts/get_version.sh "$FILENAME" "${{ inputs.occurrence }}" "${{ inputs.expression }}")
       if [ "$VERSION" == "" ]
       then
         echo "Version could not be determined from file named: ${{ inputs.filename }}"
