@@ -29,8 +29,8 @@ runs:
   - name: ensure existance of compare tag
     shell: bash
     run: |
-      git tag -l ${{ inputs.compare_tag }} | grep ${{ inputs.compare_tag }}
-      if [ "$?" != "0" ]
+      LINES=$(git tag -l ${{ inputs.compare_tag }} | wc --lines)
+      if [ "$LINES" == "0" ]
       then
         echo "compare tag doesn't exist yet"
         echo "COMPARE_TAG_EXISTS=0" >> $GITHUB_ENV
