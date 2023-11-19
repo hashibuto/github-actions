@@ -31,6 +31,6 @@ jobs:
       with:
         fetch-depth: 0 
 
-    - name: print directory name
+    - name: execute tests
       shell: bash
-      run: echo ${{ needs.evaluate-changed-items.outputs.directories }}
+      run: make test

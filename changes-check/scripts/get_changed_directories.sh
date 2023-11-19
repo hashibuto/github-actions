@@ -3,6 +3,7 @@
 PATH_PREFIX="$1"
 INCLUDE="$2"
 EXCLUDE="$3"
+INCLUDE_HIDDEN="$4"
 
 # receives a list of changes from the stdin
 CHANGED_DIRS=()
@@ -60,7 +61,13 @@ do
         continue
     fi
 
-    DIRNAME=$PATH_PREFIX$(echo $ITEM | cut -d "/" -f 1)
+    SUFFIX=$(echo $ITEM | cut -d "/" -f 1)
+    if [ "$INCLUDE_HIDDEN" == "false" ] && [[ "$SUFFIX" == "."*  ]]
+    then
+        continue
+    fi
+
+    DIRNAME=${PATH_PREFIX}${SUFFIX}
     if [ $DIRNAME == $CHANGED ]
     then
         continue

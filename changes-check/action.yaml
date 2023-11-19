@@ -10,6 +10,9 @@ inputs:
   exclude:
     description: glob pattern used to exclude files, space delimited for multiple patterns
     default: ""
+  include_hidden:
+    description: include hidden directories
+    default: false
 outputs:
   directories:
     description: json list of all directories containing changes
