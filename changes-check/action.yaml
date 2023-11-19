@@ -41,14 +41,14 @@ runs:
   - name: create compare tag
     if: env.COMPARE_TAG_EXISTS == '0'
     uses: actions/github-script@v5
-      with:
-        script: |
-          github.rest.git.createRef({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            ref: refs/tags/${{ inputs.compare_tag }},
-            sha: origin/${{ inputs.base_branch }}
-          })
+    with:
+      script: |
+        github.rest.git.createRef({
+          owner: context.repo.owner,
+          repo: context.repo.repo,
+          ref: refs/tags/${{ inputs.compare_tag }},
+          sha: origin/${{ inputs.base_branch }}
+        })
   - id: get_changed_directories
     name: get changed directories
     shell: bash
