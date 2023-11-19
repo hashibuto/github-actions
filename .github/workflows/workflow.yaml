@@ -45,3 +45,15 @@ jobs:
     - name: Execute tests
       shell: bash
       run: make test
+
+  branch_protection_funnel:
+    runs-on: ubuntu-22.04
+    needs: execute_integration_tasks
+    if: always()
+    steps:
+    - name: All checks ok
+      if: ${{ !(contains(needs.*.result, 'failure')) }}
+        run: exit 0
+      - name: Some tests failed
+        if: ${{ contains(needs.*.result, 'failure') }}
+        run: exit 1
