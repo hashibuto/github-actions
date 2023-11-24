@@ -49,14 +49,14 @@ runs:
       if [ "$LINES" == "0" ]
       then
         echo "compare tag doesn't exist yet"
-        echo "compare-tag_EXISTS=0" >> $GITHUB_ENV
+        echo "COMPARE_TAG_EXISTS=0" >> $GITHUB_ENV
         echo "BASE_SHA=$(git rev-parse origin/${{ inputs.base-branch }})" >> $GITHUB_ENV
       else
         echo "compare tag exists"
-        echo "compare-tag_EXISTS=1" >> $GITHUB_ENV
+        echo "COMPARE_TAG_EXISTS=1" >> $GITHUB_ENV
       fi
   - name: create compare tag
-    if: env.compare-tag_EXISTS == '0'
+    if: env.COMPARE_TAG_EXISTS == '0'
     uses: actions/github-script@v7
     with:
       script: |
@@ -71,5 +71,6 @@ runs:
     shell: bash
     run: |
       DATA=$(git diff --name-only origin/${{ inputs.base-branch }} ${{ github.sha }} | $GITHUB_ACTION_PATH/scripts/get_changed_directories.sh "${{ inputs.base_path }}" "${{ inputs.include }}" "${{ inputs.exclude }}" "${{ inputs.include-hidden }}")
+      printf $DATA
       printf directories=$(echo $DATA | jq .directories) >> $GITHUB_OUTPUT
-      printf names=$(echo $DATA | jq .names) >> $GITHUB_OUTPUT      
+      printf names=$(echo $DATA | jq .names) >> $GITHUB_OUTPUT
