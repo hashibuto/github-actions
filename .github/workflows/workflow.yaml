@@ -40,7 +40,7 @@ jobs:
 
     - name: Show merge status
       shell: bash
-      run: echo ${{ needs.evaluate-changed-items.outputs.is-merged }}
+      run: echo ${{ needs.mevaluate-changed-items.outputs.is-merged }}
 
     - id: check-version
       name: Check release version
