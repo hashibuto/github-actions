@@ -72,9 +72,6 @@ jobs:
     - name: Integration tasks failed
       if: ${{ contains(needs.*.result, 'failure') }}
       run: exit 1
-    - name: Show merge status
-      shell: bash
-      run: echo ${{ needs.evaluate-changed-items.outputs.is-merged }}
     - name: Update compare tag
       if: needs.evaluate-changed-items.outputs.is-merged == true
       uses: actions/github-script@v7
