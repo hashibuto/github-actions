@@ -11,6 +11,7 @@ jobs:
     name: Evaluate changed items
     outputs:
       directories: ${{ steps.check-changes.outputs.directories }}
+      names: ${{ steps.check-changes.outputs.names }}
     steps:
     - uses: actions/checkout@v4
       with:
