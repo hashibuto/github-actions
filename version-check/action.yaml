@@ -69,7 +69,7 @@ runs:
     shell: bash
     run: $GITHUB_ACTION_PATH/scripts/check_tag_exists.sh "${{ steps.read-version-file.version }}"
   - name: create release tag
-    if: inputs.create-release-tag == true
+    if: ${{ inputs.create-release-tag == 'true' }}
     uses: actions/github-script@v7
     with:
       script: |
@@ -80,7 +80,7 @@ runs:
           sha: "${{ github.sha }}"
         })    
   - name: create major version release tag
-    if: inputs.create-major-release-tag == true
+    if: ${{ inputs.create-major-release-tag == 'true' }}
     uses: actions/github-script@v7
     with:
       script: |
