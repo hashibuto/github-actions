@@ -68,8 +68,40 @@ runs:
     name: check if version is ok for tagging
     shell: bash
     run: $GITHUB_ACTION_PATH/scripts/check_tag_exists.sh "${{ steps.read-version-file.version }}"
+  - name: check tag status
+    shell: bash
+    run: |
+      LINES=$(git tag -l ${{ env.FQ_VERSION }} | wc --lines)
+      if [ "$LINES" == "0" ]
+      then
+        echo "release tag doesn't exist yet"
+        echo "RELEASE_TAG_EXISTS=0" >> $GITHUB_ENV
+      else
+        echo "release tag exists"
+        echo "RELEASE_TAG_EXISTS=1" >> $GITHUB_ENV
+      fi
+      LINES=$(git tag -l ${{ env.FQ_MAJOR_VERSION }} | wc --lines)
+      if [ "$LINES" == "0" ]
+      then
+        echo "major version tag doesn't exist yet"
+        echo "MAJOR_TAG_EXISTS=0" >> $GITHUB_ENV
+      else
+        echo "major version tag exists"
+        echo "MAJOR_TAG_EXISTS=1" >> $GITHUB_ENV
+      fi      
   - name: create release tag
-    if: ${{ inputs.create-release-tag == 'true' }}
+    if: ${{ inputs.create-release-tag == 'true' && env.RELEASE_TAG_EXISTS == '0' }}
+    uses: actions/github-script@v7
+    with:
+      script: |
+        github.rest.git.createRef({
+          owner: context.repo.owner,
+          repo: context.repo.repo,
+          ref: "refs/tags/${{ env.FQ_VERSION }}",
+          sha: "${{ github.sha }}"
+        })
+  - name: update release tag
+    if: ${{ inputs.create-release-tag == 'true' && env.RELEASE_TAG_EXISTS == '1' }}
     uses: actions/github-script@v7
     with:
       script: |
@@ -77,10 +109,22 @@ runs:
           owner: context.repo.owner,
           repo: context.repo.repo,
           ref: "tags/${{ env.FQ_VERSION }}",
+          sha: "${{ github.sha }}",
+          force: true
+        })            
+  - name: create major release tag
+    if: ${{ inputs.create-major-release-tag == 'true' && env.MAJOR_TAG_EXISTS == '0' }}
+    uses: actions/github-script@v7
+    with:
+      script: |
+        github.rest.git.createRef({
+          owner: context.repo.owner,
+          repo: context.repo.repo,
+          ref: "refs/tags/${{ env.FQ_MAJOR_VERSION }}",
           sha: "${{ github.sha }}"
-        })    
-  - name: create major version release tag
-    if: ${{ inputs.create-major-release-tag == 'true' }}
+        })
+  - name: update release tag
+    if: ${{ inputs.create-major-release-tag == 'true' && env.MAJOR_TAG_EXISTS == '1' }}
     uses: actions/github-script@v7
     with:
       script: |
@@ -90,4 +134,4 @@ runs:
           ref: "tags/${{ env.FQ_MAJOR_VERSION }}",
           sha: "${{ github.sha }}",
           force: true
-        })    
+        })   
