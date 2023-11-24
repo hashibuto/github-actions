@@ -44,7 +44,7 @@ jobs:
       run: echo ${{ needs.evaluate-changed-items.outputs.is-merged }}
 
     - name: Test merge status
-      if: needs.evaluate-changed-items.outputs.is-merged == false
+      if: needs.evaluate-changed-items.outputs.is-merged == "false"
       shell: bash
       run: echo ${{ toJson(needs) }}      
 
