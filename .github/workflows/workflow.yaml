@@ -38,6 +38,10 @@ jobs:
       with:
         fetch-depth: 0 
 
+    - name: Show merge status
+      shell: bash
+      run: echo ${{ needs.evaluate-changed-items.outputs.is-merged }}
+
     - id: check-version
       name: Check release version
       uses: hashibuto/github-actions/version-check@test
