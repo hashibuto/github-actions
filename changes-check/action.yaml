@@ -70,5 +70,6 @@ runs:
     name: get changed directories
     shell: bash
     run: |
-      printf directories=$(git diff --name-only origin/${{ inputs.base-branch }} ${{ github.sha }} | $GITHUB_ACTION_PATH/scripts/get_changed_directories.sh "${{ inputs.base_path }}" "${{ inputs.include }}" "${{ inputs.exclude }}" "${{ inputs.include-hidden }}" | jq .directories) >> $GITHUB_OUTPUT      
-      printf names=$(git diff --name-only origin/${{ inputs.base-branch }} ${{ github.sha }} | $GITHUB_ACTION_PATH/scripts/get_changed_directories.sh "${{ inputs.base_path }}" "${{ inputs.include }}" "${{ inputs.exclude }}" "${{ inputs.include-hidden }}" | jq .names) >> $GITHUB_OUTPUT      
+      DATA=$(git diff --name-only origin/${{ inputs.base-branch }} ${{ github.sha }} | $GITHUB_ACTION_PATH/scripts/get_changed_directories.sh "${{ inputs.base_path }}" "${{ inputs.include }}" "${{ inputs.exclude }}" "${{ inputs.include-hidden }}")
+      printf directories=$(echo $DATA | jq .directories) >> $GITHUB_OUTPUT
+      printf names=$(echo $DATA | jq .names) >> $GITHUB_OUTPUT      
