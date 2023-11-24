@@ -39,6 +39,7 @@ jobs:
         fetch-depth: 0 
 
     - id: check-version
+      name: Check release version
       uses: hashibuto/github-actions/version-check@test
       with:
         path-prefix: ${{ matrix.directory }}
@@ -48,6 +49,7 @@ jobs:
       run: make test
 
     - id: tag-release-version
+      name: Tag release version
       if: needs.evaluate-changed-items.outputs.is-merged == true
       uses: hashibuto/github-actions/version-check@test
       with:
