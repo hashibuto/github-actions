@@ -54,7 +54,7 @@ jobs:
           github.rest.git.createRef({
             owner: context.repo.owner,
             repo: context.repo.repo,
-            ref: "refs/tags/${{ check-version.inputs.tag-prefix }}${{ check-version.outputs.version }}",
+            ref: "refs/tags/${{ steps.check-version.inputs.tag-prefix }}${{ steps.check-version.outputs.version }}",
             sha: "${{ github.sha }}"
           })
 
