@@ -37,9 +37,9 @@ runs:
     run: |
       if [ ${{ github.ref }} == refs/heads/${{ inputs.base-branch }} ]
       then
-        printf is-merged=true >> $GITHUB_OUTPUT
+        echo is-merged=true >> $GITHUB_OUTPUT
       else
-        printf is-merged=false >> $GITHUB_OUTPUT
+        echo is-merged=false >> $GITHUB_OUTPUT
       fi
     
   - name: ensure existance of compare tag
