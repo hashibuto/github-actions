@@ -73,7 +73,7 @@ runs:
     uses: actions/github-script@v7
     with:
       script: |
-        github.rest.git.createRef({
+        github.rest.git.updateRef({
           owner: context.repo.owner,
           repo: context.repo.repo,
           ref: "refs/tags/${{ env.FQ_VERSION }}",
@@ -84,9 +84,10 @@ runs:
     uses: actions/github-script@v7
     with:
       script: |
-        github.rest.git.createRef({
+        github.rest.git.updateRef({
           owner: context.repo.owner,
           repo: context.repo.repo,
           ref: "refs/tags/${{ env.FQ_MAJOR_VERSION }}",
-          sha: "${{ github.sha }}"
+          sha: "${{ github.sha }}",
+          force: true
         })    
