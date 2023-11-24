@@ -90,6 +90,6 @@ then
 fi
 
 # convert array to json list
-ALL_DIRS=$(printf '%s\n' "${CHANGED_DIRS[@]}" | jq -R . | jq -c .)
-ALL_NAMES=$(printf '%s\n' "${NAMES[@]}" | jq -R . | jq -c .)
+ALL_DIRS=$(printf '%s\n' "${CHANGED_DIRS[@]}" | jq -R . | jq -cs .)
+ALL_NAMES=$(printf '%s\n' "${NAMES[@]}" | jq -R . | jq -cs .)
 echo "{\"names\":${ALL_NAMES},\"directories\":${ALL_DIRS}}"
