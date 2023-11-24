@@ -71,7 +71,7 @@ runs:
     shell: bash
     run: |
       DATA=$(git diff --name-only origin/${{ inputs.base-branch }} ${{ github.sha }} | $GITHUB_ACTION_PATH/scripts/get_changed_directories.sh "${{ inputs.base_path }}" "${{ inputs.include }}" "${{ inputs.exclude }}" "${{ inputs.include-hidden }}")
-      printf $(echo $DATA | jq .directories)
-      printf $(echo $DATA | jq .names)
+      printf $(echo $DATA | jq -cs .directories)
+      printf $(echo $DATA | jq -cs .names)
       printf directories=$(echo $DATA | jq .directories) >> $GITHUB_OUTPUT
       printf names=$(echo $DATA | jq .names) >> $GITHUB_OUTPUT
