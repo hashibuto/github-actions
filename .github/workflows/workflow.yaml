@@ -23,7 +23,6 @@ jobs:
         base-branch: master
 
   execute-integration-tasks:
-    name: Execute integration tasks
     strategy: 
       matrix:
         directory: ${{ fromJson(needs.evaluate-changed-items.outputs.directories) }}
