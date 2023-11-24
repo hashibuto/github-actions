@@ -60,11 +60,12 @@ runs:
     uses: actions/github-script@v7
     with:
       script: |
-        github.rest.git.createRef({
+        github.rest.git.updateRef({
           owner: context.repo.owner,
           repo: context.repo.repo,
-          ref: "refs/tags/${{ inputs.compare-tag }}",
-          sha: "${{ env.BASE_SHA }}"
+          ref: "tags/${{ inputs.compare-tag }}",
+          sha: "${{ env.BASE_SHA }}",
+          force: true
         })
   - id: get_changed_directories
     name: get changed directories

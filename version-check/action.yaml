@@ -76,7 +76,7 @@ runs:
         github.rest.git.updateRef({
           owner: context.repo.owner,
           repo: context.repo.repo,
-          ref: "refs/tags/${{ env.FQ_VERSION }}",
+          ref: "tags/${{ env.FQ_VERSION }}",
           sha: "${{ github.sha }}"
         })    
   - name: create major version release tag
@@ -87,7 +87,7 @@ runs:
         github.rest.git.updateRef({
           owner: context.repo.owner,
           repo: context.repo.repo,
-          ref: "refs/tags/${{ env.FQ_MAJOR_VERSION }}",
+          ref: "tags/${{ env.FQ_MAJOR_VERSION }}",
           sha: "${{ github.sha }}",
           force: true
         })    
