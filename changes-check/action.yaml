@@ -23,6 +23,9 @@ outputs:
   directories:
     description: json list of all directories containing changes
     value: ${{ steps.get_changed_directories.outputs.directories }}
+  names:
+    description: json list of all directory names containing changes, only the final name in the path
+    value: ${{ steps.get_changed_directories.outputs.names }}
   is-merged:
     description: returns true if the changes are merged to the base branch
     value: ${{ steps.determine_merge_state.outputs.is-merged }}
@@ -67,5 +70,5 @@ runs:
     name: get changed directories
     shell: bash
     run: |
-      printf directories=$(git diff --name-only origin/${{ inputs.base-branch }} ${{ github.sha }} | $GITHUB_ACTION_PATH/scripts/get_changed_directories.sh "${{ inputs.base_path }}" "${{ inputs.include }}" "${{ inputs.exclude }}" "${{ inputs.include-hidden }}") >> $GITHUB_OUTPUT
-
+      printf directories=$(git diff --name-only origin/${{ inputs.base-branch }} ${{ github.sha }} | $GITHUB_ACTION_PATH/scripts/get_changed_directories.sh "${{ inputs.base_path }}" "${{ inputs.include }}" "${{ inputs.exclude }}" "${{ inputs.include-hidden }}" | jq .directories) >> $GITHUB_OUTPUT      
+      printf names=$(git diff --name-only origin/${{ inputs.base-branch }} ${{ github.sha }} | $GITHUB_ACTION_PATH/scripts/get_changed_directories.sh "${{ inputs.base_path }}" "${{ inputs.include }}" "${{ inputs.exclude }}" "${{ inputs.include-hidden }}" | jq .names) >> $GITHUB_OUTPUT      

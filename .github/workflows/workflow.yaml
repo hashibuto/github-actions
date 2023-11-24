@@ -23,7 +23,9 @@ jobs:
   execute-integration-tasks:
     strategy: 
       matrix:
-        directory: ${{ fromJson(needs.evaluate-changed-items.outputs.directories) }}  
+        directory: ${{ fromJson(needs.evaluate-changed-items.outputs.directories) }}
+        name: ${{ fromJson(needs.evaluate-changed-items.outputs.names) }}
+
     defaults:
       run:
         working-directory:
@@ -41,6 +43,7 @@ jobs:
       uses: hashibuto/github-actions/version-check@test
       with:
         path-prefix: ${{ matrix.directory }}
+        tag-prefix: ${{ matrix.name }}
 
     - name: Execute tests
       shell: bash
@@ -49,7 +52,7 @@ jobs:
     - name: Preview release tag
       shell: bash
       run: |
-        echo "Tag will be: ${{ steps.check-version.inputs.tag-prefix }}${{ steps.check-version.outputs.version }}"
+        echo "Tag will be: ${{ steps.check-version.outputs.version }}"
 
     - name: Create release tag
       if: ${{ needs.evaluate-changed-items.outputs.is-merged == true }}
@@ -59,7 +62,7 @@ jobs:
           github.rest.git.createRef({
             owner: context.repo.owner,
             repo: context.repo.repo,
-            ref: "refs/tags/${{ steps.check-version.inputs.tag-prefix }}${{ steps.check-version.outputs.version }}",
+            ref: "refs/tags/${{ steps.check-version.outputs.version }}",
             sha: "${{ github.sha }}"
           })
 

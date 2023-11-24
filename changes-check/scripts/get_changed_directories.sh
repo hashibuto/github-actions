@@ -7,6 +7,7 @@ INCLUDE_HIDDEN="$4"
 
 # receives a list of changes from the stdin
 CHANGED_DIRS=()
+NAMES=()
 FILE_LIST=$(cat)
 for CHANGED in $FILE_LIST
 do
@@ -79,13 +80,16 @@ do
     fi
 
     CHANGED_DIRS[${#CHANGED_DIRS[@]}]=$DIRNAME
+    NAMES[${#NAMES[@]}]=$(basename $DIRNAME)
 done
 
 if [ ${#CHANGED_DIRS[@]} -eq 0 ]
 then
-    echo "[]"
+    echo "{\"names\":[],\"directories\":[]}"
     exit
 fi
 
 # convert array to json list
-printf '%s\n' "${CHANGED_DIRS[@]}" | jq -R . | jq -cs .
+ALL_DIRS=$(printf '%s\n' "${CHANGED_DIRS[@]}" | jq -R . | jq -cs .)
+ALL_NAMES=$(printf '%s\n' "${NAMES[@]}" | jq -R . | jq -cs .)
+echo "{\"names\":${ALL_NAMES},\"directories\":${ALL_DIRS}}"
