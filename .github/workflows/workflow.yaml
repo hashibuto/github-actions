@@ -40,13 +40,13 @@ jobs:
 
     - name: Show merge status
       shell: bash
-      run: echo ${{ needs }}
+      run: echo ${{ toJson(needs) }}
 
     - id: check-version
       name: Check release version
       uses: hashibuto/github-actions/version-check@test
       with:
-        path-prefix: ${{ toJson(matrix.directory) }}
+        path-prefix: ${{ matrix.directory }}
 
     - name: Execute tests
       shell: bash
