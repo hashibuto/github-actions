@@ -58,11 +58,11 @@ runs:
       fi
 
       MAJOR_VERSION=$(echo $VERSION | tr "." "\n" | head -n 1)
-      echo FQ_VERSION=${{ inputs.tag-prefix }}${VERSION}
-      echo FQ_DEV_VERSION=${{ inputs.tag-prefix }}${VERSION}.dev$((16#$(git rev-parse --short HEAD)))
+      FQ_VERSION=${{ inputs.tag-prefix }}${VERSION}
+      FQ_DEV_VERSION=${{ inputs.tag-prefix }}${VERSION}.dev$((16#$(git rev-parse --short HEAD)))
       echo "version=${FQ_VERSION}" >> "$GITHUB_OUTPUT"
       echo "dev-version=${FQ_DEV_VERSION}" >> "$GITHUB_OUTPUT"
-      echo "FQ_VERSION=$FQ_VERSION" >> $GITHUB_ENV
+      echo "FQ_VERSION=${FQ_VERSION}" >> $GITHUB_ENV
       echo "FQ_MAJOR_VERSION=${{ inputs.tag-prefix }}${MAJOR_VERSION}" >> $GITHUB_ENV
   - id: check-version-ok
     name: check if version is ok for tagging
