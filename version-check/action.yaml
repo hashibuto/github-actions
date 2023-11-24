@@ -13,25 +13,80 @@ inputs:
   tag-prefix:
     description: prefix used to create tag from version
     default: ""
+  path-prefix:
+    description: path prefix used to location version file
+    default: ""
+  create-release-tag:
+    description: create a release tag from the fully qualified version (including prefix)
+    default: false
+  create-major-release-tag:
+    description: create an additional release tag for just the major version
+    default: false
 outputs:
   version:
     description: version which was provided in the supplied version file
-    value: ${{ steps.read_version_file.outputs.version }}
+    value: ${{ steps.read-version-file.outputs.version }}
   dev-version:
     description: version which was provided in the supplied version file, with a .devN suffix based on the short commit hash
-    value: ${{ steps.read_version_file.outputs.dev-version }}
+    value: ${{ steps.read-version-file.outputs.dev-version }}
+
 runs:
   using: composite
   steps:
-  - id: read_version_file
+  - id: read-version-file
     name: read version file
     shell: bash
     run: |
-      VERSION=$(./scripts/get_version.sh "${{ inputs.filename }}" "${{ inputs.occurrence }}" "${{ inputs.expression }}")
-      echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
-      echo "dev-version=${VERSION}.dev$((16#$(git rev-parse --short HEAD)))" >> "$GITHUB_OUTPUT"
-  - id: check_tag_exists
-    name: check if version tag exists
+      PATH_PREFIX="${{ inputs.path-prefix }}"
+      if [[ "$PATH_PREFIX" != */ ]]
+      then
+        PATH_PREFIX=${PATH_PREFIX}/
+      fi
+      FILENAME="${PATH_PREFIX}${{ inputs.filename }}"
+      if [ ! -f "$FILENAME" ]
+      then
+        echo "Version file $FILENAME does not exist at the specified location"
+        exit 1
+      else
+        echo "Version file $FILENAME was located"
+      fi
+      VERSION=$($GITHUB_ACTION_PATH/scripts/get_version.sh "$FILENAME" "${{ inputs.occurrence }}" "${{ inputs.expression }}")
+      if [ "$VERSION" == "" ]
+      then
+        echo "Version could not be determined from file named: ${{ inputs.filename }}"
+        exit 1
+      fi
+
+      MAJOR_VERSION=$(echo $VERSION | tr "." "\n" | head -n 1)
+      echo FQ_VERSION=${{ inputs.tag-prefix }}${VERSION}
+      echo FQ_DEV_VERSION=${{ inputs.tag-prefix }}${VERSION}.dev$((16#$(git rev-parse --short HEAD)))
+      echo "version=${FQ_VERSION}" >> "$GITHUB_OUTPUT"
+      echo "dev-version=${FQ_DEV_VERSION}" >> "$GITHUB_OUTPUT"
+      echo "FQ_VERSION=$FQ_VERSION" >> $GITHUB_ENV
+      echo "FQ_MAJOR_VERSION=${{ inputs.tag-prefix }}${MAJOR_VERSION}" >> $GITHUB_ENV
+  - id: check-version-ok
+    name: check if version is ok for tagging
     shell: bash
-    run: ./scripts/check_tag_exists.sh "${{ steps.read_version_file.version }}" 
-       
+    run: $GITHUB_ACTION_PATH/scripts/check_tag_exists.sh "${{ steps.read-version-file.version }}"
+  - name: create release tag
+    if: inputs.create-release-tag == true
+    uses: actions/github-script@v7
+    with:
+      script: |
+        github.rest.git.createRef({
+          owner: context.repo.owner,
+          repo: context.repo.repo,
+          ref: "refs/tags/${{ env.FQ_VERSION }}",
+          sha: "${{ github.sha }}"
+        })    
+  - name: create major version release tag
+    if: inputs.create-major-release-tag == true
+    uses: actions/github-script@v7
+    with:
+      script: |
+        github.rest.git.createRef({
+          owner: context.repo.owner,
+          repo: context.repo.repo,
+          ref: "refs/tags/${{ env.FQ_MAJOR_VERSION }}",
+          sha: "${{ github.sha }}"
+        })    

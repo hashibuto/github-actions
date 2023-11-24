@@ -3,9 +3,11 @@
 PATH_PREFIX="$1"
 INCLUDE="$2"
 EXCLUDE="$3"
+INCLUDE_HIDDEN="$4"
 
 # receives a list of changes from the stdin
 CHANGED_DIRS=()
+NAMES=()
 FILE_LIST=$(cat)
 for CHANGED in $FILE_LIST
 do
@@ -60,7 +62,13 @@ do
         continue
     fi
 
-    DIRNAME=$PATH_PREFIX$(echo $ITEM | cut -d "/" -f 1)
+    SUFFIX=$(echo $ITEM | cut -d "/" -f 1)
+    if [ "$INCLUDE_HIDDEN" == "false" ] && [[ "$SUFFIX" == .*  ]]
+    then
+        continue
+    fi
+
+    DIRNAME=${PATH_PREFIX}${SUFFIX}
     if [ $DIRNAME == $CHANGED ]
     then
         continue
@@ -72,7 +80,16 @@ do
     fi
 
     CHANGED_DIRS[${#CHANGED_DIRS[@]}]=$DIRNAME
+    NAMES[${#NAMES[@]}]=$(basename $DIRNAME)
 done
 
+if [ ${#CHANGED_DIRS[@]} -eq 0 ]
+then
+    echo "{\"names\":[],\"directories\":[]}"
+    exit
+fi
+
 # convert array to json list
-printf '%s\n' "${CHANGED_DIRS[@]}" | jq -R . | jq -s .
+ALL_DIRS=$(printf '%s\n' "${CHANGED_DIRS[@]}" | jq -R . | jq -cs .)
+ALL_NAMES=$(printf '%s\n' "${NAMES[@]}" | jq -R . | jq -cs .)
+echo "{\"names\":${ALL_NAMES},\"directories\":${ALL_DIRS}}"

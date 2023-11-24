@@ -1,0 +1,83 @@
+name: execute integration tasks
+
+on:
+  push:
+    branches:
+    - "**"
+
+jobs:
+  evaluate-changed-items:
+    runs-on: ubuntu-22.04
+    name: Evaluate changed items
+    outputs:
+      directories: ${{ steps.check-changes.outputs.directories }}
+      names: ${{ steps.check-changes.outputs.names }}
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    - id: check-changes
+      uses: hashibuto/github-actions/changes-check@test
+      with:
+        base-branch: master
+
+  execute-integration-tasks:
+    strategy: 
+      matrix:
+        directory: ${{ fromJson(needs.evaluate-changed-items.outputs.directories) }}
+
+    defaults:
+      run:
+        working-directory: ${{ matrix.directory }}
+    runs-on: ubuntu-22.04
+    if: needs.evaluate-changed-items.outputs.directories != '[]'
+    name: Verify changes
+    needs: evaluate-changed-items
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0 
+
+    - id: check-version
+      name: Check release version
+      uses: hashibuto/github-actions/version-check@test
+      with:
+        path-prefix: ${{ matrix.directory }}
+
+    - name: Execute tests
+      shell: bash
+      run: make test
+
+    - id: tag-release-version
+      name: Tag release version
+      if: needs.evaluate-changed-items.outputs.is-merged == true
+      uses: hashibuto/github-actions/version-check@test
+      with:
+        path-prefix: ${{ matrix.directory }}
+        tag-prefix: ${{ matrix.directory }}_
+        create-release-tag: true
+        create-major-release-tag: true
+
+  branch-protection-funnel:
+    runs-on: ubuntu-22.04
+    name: Verify integration tasks
+    needs: execute-integration-tasks
+    if: always()
+    steps:
+    - name: Integration tasks succeeded
+      if: ${{ !(contains(needs.*.result, 'failure')) }}
+      run: exit 0
+    - name: Integration tasks failed
+      if: ${{ contains(needs.*.result, 'failure') }}
+      run: exit 1
+    - name: Update compare tag
+      if: needs.evaluate-changed-items.outputs.is-merged == true
+      uses: actions/github-script@v7
+      with:
+        script: |
+          github.rest.git.createRef({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            ref: "refs/tags/base",
+            sha: "${{ github.sha }}"
+          })

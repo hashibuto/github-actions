@@ -2,3 +2,4 @@ package/item.py
 package/item2.py
 module/xyz.py
 list/123.py
+.github/dog.txt

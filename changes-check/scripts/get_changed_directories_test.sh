@@ -3,7 +3,7 @@
 EXIT_CODE=0
 
 echo -n "testing get changed directories............................."
-CHANGED_DIRECTORIES=$(cat ../data/file-list-standard.txt | ./get_changed_directories.sh "" "" "")
+CHANGED_DIRECTORIES=$(cat ../data/file-list-standard.txt | ./get_changed_directories.sh "" "" "" "false" | jq .directories)
 COUNT=$(echo $CHANGED_DIRECTORIES | jq length)
 echo $CHANGED_DIRECTORIES | jq -e '.[]|select(. == "package")' > /dev/null
 HAS_PACKAGE=$?
@@ -20,7 +20,7 @@ else
 fi
 
 echo -n "testing get nested changed directories top level............"
-CHANGED_DIRECTORIES=$(cat ../data/file-list-nested.txt | ./get_changed_directories.sh "" "" "")
+CHANGED_DIRECTORIES=$(cat ../data/file-list-nested.txt | ./get_changed_directories.sh "" "" "" "false" | jq .directories)
 COUNT=$(echo $CHANGED_DIRECTORIES | jq length)
 echo $CHANGED_DIRECTORIES | jq -e '.[]|select(. == "src")' > /dev/null
 HAS_SRC=$?
@@ -33,7 +33,7 @@ else
 fi
 
 echo -n "testing get changed nested.................................."
-CHANGED_DIRECTORIES=$(cat ../data/file-list-nested.txt | ./get_changed_directories.sh "src/" "" "")
+CHANGED_DIRECTORIES=$(cat ../data/file-list-nested.txt | ./get_changed_directories.sh "src/" "" "" "false" | jq .directories)
 COUNT=$(echo $CHANGED_DIRECTORIES | jq length)
 echo $CHANGED_DIRECTORIES | jq -e '.[]|select(. == "src/package")' > /dev/null
 HAS_PACKAGE=$?
@@ -50,7 +50,7 @@ else
 fi
 
 echo -n "testing get changed double nested..........................."
-CHANGED_DIRECTORIES=$(cat ../data/file-list-nested.txt | ./get_changed_directories.sh "src/package/" "" "")
+CHANGED_DIRECTORIES=$(cat ../data/file-list-nested.txt | ./get_changed_directories.sh "src/package/" "" "" "false" | jq .directories)
 COUNT=$(echo $CHANGED_DIRECTORIES | jq length)
 echo $CHANGED_DIRECTORIES | jq -e '.[]|select(. == "src/package/rooster")' > /dev/null
 HAS_ROOSTER=$?
@@ -65,7 +65,7 @@ else
 fi
 
 echo -n "testing get changed include filter.........................."
-CHANGED_DIRECTORIES=$(cat ../data/file-list-nested.txt | ./get_changed_directories.sh "src/package/" "*.java" "")
+CHANGED_DIRECTORIES=$(cat ../data/file-list-nested.txt | ./get_changed_directories.sh "src/package/" "*.java" "" "false" | jq .directories)
 COUNT=$(echo $CHANGED_DIRECTORIES | jq length)
 echo $CHANGED_DIRECTORIES | jq -e '.[]|select(. == "src/package/rooster")' > /dev/null
 HAS_ROOSTER=$?
@@ -78,7 +78,7 @@ else
 fi
 
 echo -n "testing get changed multiple include filters................"
-CHANGED_DIRECTORIES=$(cat ../data/file-list-multi.txt | ./get_changed_directories.sh "src/" "*.txt *pants*" "")
+CHANGED_DIRECTORIES=$(cat ../data/file-list-multi.txt | ./get_changed_directories.sh "src/" "*.txt *pants*" "" "false" | jq .directories)
 COUNT=$(echo $CHANGED_DIRECTORIES | jq length)
 echo $CHANGED_DIRECTORIES | jq -e '.[]|select(. == "src/package")' > /dev/null
 HAS_PAGCKAGE=$?
@@ -93,11 +93,22 @@ else
 fi
 
 echo -n "testing get changed exclude filter.........................."
-CHANGED_DIRECTORIES=$(cat ../data/file-list-multi.txt | ./get_changed_directories.sh "src/" "" "*.txt *pants*")
+CHANGED_DIRECTORIES=$(cat ../data/file-list-multi.txt | ./get_changed_directories.sh "src/" "" "*.txt *pants*" "false" | jq .directories)
 COUNT=$(echo $CHANGED_DIRECTORIES | jq length)
 echo $CHANGED_DIRECTORIES | jq -e '.[]|select(. == "src/info")' > /dev/null
 HAS_INFO=$?
 if [ "$COUNT" != "1" ] || [ "$HAS_INFO" != "0" ]
+then
+    EXIT_CODE=1
+    echo "fail"
+else
+    echo "pass"
+fi
+
+echo -n "testing empty input list...................................."
+CHANGED_DIRECTORIES=$(echo "" | ./get_changed_directories.sh "" "" "" "false" | jq .directories)
+COUNT=$(echo $CHANGED_DIRECTORIES | jq length)
+if [ "$COUNT" != "0" ]
 then
     EXIT_CODE=1
     echo "fail"
