@@ -40,7 +40,7 @@ jobs:
 
     - name: Show merge status
       shell: bash
-      run: echo ${{ toJson(needs) }}
+      run: echo ${{ toJSON(needs) }}
 
     - id: check-version
       name: Check release version
