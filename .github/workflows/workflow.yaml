@@ -12,6 +12,7 @@ jobs:
     outputs:
       directories: ${{ steps.check-changes.outputs.directories }}
       names: ${{ steps.check-changes.outputs.names }}
+      is-merged: ${{ steps.check-changes.outputs.is-merged }}
     steps:
     - uses: actions/checkout@v4
       with:
@@ -40,7 +41,7 @@ jobs:
 
     - name: Show merge status
       shell: bash
-      run: echo ${{ toJSON(needs) }}
+      run: echo ${{ toJson(needs) }}
 
     - id: check-version
       name: Check release version
