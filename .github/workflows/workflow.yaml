@@ -46,7 +46,12 @@ jobs:
       shell: bash
       run: make test
 
-    - name: create release tag
+    - name: Preview release tag
+      shell: bash
+      run: |
+        echo "Tag will be: ${{ steps.check-version.inputs.tag-prefix }}${{ steps.check-version.outputs.version }}"
+
+    - name: Create release tag
       if: ${{ needs.evaluate-changed-items.outputs.is-merged == true }}
       uses: actions/github-script@v7
       with:
