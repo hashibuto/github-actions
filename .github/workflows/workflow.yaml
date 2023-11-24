@@ -18,9 +18,9 @@ jobs:
     - id: check-changes
       uses: hashibuto/github-actions/changes-check@test
       with:
-        base_branch: master
+        base-branch: master
 
-  execute_integration_tasks:
+  execute-integration-tasks:
     strategy: 
       matrix:
         directory: ${{ fromJson(needs.evaluate-changed-items.outputs.directories) }}  
@@ -46,10 +46,22 @@ jobs:
       shell: bash
       run: make test
 
-  branch_protection_funnel:
+    - name: create release tag
+      if: ${{ needs.evaluate-changed-items.outputs.is-merged == true }}
+      uses: actions/github-script@v7
+      with:
+        script: |
+          github.rest.git.createRef({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            ref: "refs/tags/${{ check-version.inputs.tag-prefix }}${{ check-version.outputs.version }}",
+            sha: "${{ github.sha }}"
+          })
+
+  branch-protection-funnel:
     runs-on: ubuntu-22.04
     name: Verify integration tasks
-    needs: execute_integration_tasks
+    needs: execute-integration-tasks
     if: always()
     steps:
     - name: Integration tasks succeeded

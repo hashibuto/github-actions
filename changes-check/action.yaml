@@ -1,7 +1,7 @@
 name: check for directories containing changes
 description: indicate whether or not a given path has changes
 inputs:
-  path_prefix:
+  path-prefix:
     description: path prefix to directories, including the final preceding slash (eg. /src/project/)
     default: ""
   include:
@@ -10,49 +10,62 @@ inputs:
   exclude:
     description: glob pattern used to exclude files, space delimited for multiple patterns
     default: ""
-  include_hidden:
+  include-hidden:
     description: include hidden directories
     default: false
-  base_branch:
+  base-branch:
     description: base branch against which to compare current revision
     default: main
-  compare_tag: 
+  compare-tag: 
     description: tag against which to compare current revision
     default: base
 outputs:
   directories:
     description: json list of all directories containing changes
     value: ${{ steps.get_changed_directories.outputs.directories }}
+  is-merged:
+    description: returns true if the changes are merged to the base branch
+    value: ${{ steps.determine_merge_state.outputs.is-merged }}
 runs:
   using: composite
   steps:
+  - id: determine_merge_state
+    shell: bash
+    run: |
+      if [ ${{ github.ref }} == refs/heads/${{ inputs.base-branch }} ]
+      then
+        printf is-merged=true >> $GITHUB_OUTPUT
+      else
+        printf is-merged=false >> $GITHUB_OUTPUT
+      fi
+    
   - name: ensure existance of compare tag
     shell: bash
     run: |
-      LINES=$(git tag -l ${{ inputs.compare_tag }} | wc --lines)
+      LINES=$(git tag -l ${{ inputs.compare-tag }} | wc --lines)
       if [ "$LINES" == "0" ]
       then
         echo "compare tag doesn't exist yet"
-        echo "COMPARE_TAG_EXISTS=0" >> $GITHUB_ENV
-        echo "BASE_SHA=$(git rev-parse origin/${{ inputs.base_branch }})" >> $GITHUB_ENV
+        echo "compare-tag_EXISTS=0" >> $GITHUB_ENV
+        echo "BASE_SHA=$(git rev-parse origin/${{ inputs.base-branch }})" >> $GITHUB_ENV
       else
         echo "compare tag exists"
-        echo "COMPARE_TAG_EXISTS=1" >> $GITHUB_ENV
+        echo "compare-tag_EXISTS=1" >> $GITHUB_ENV
       fi
   - name: create compare tag
-    if: env.COMPARE_TAG_EXISTS == '0'
+    if: env.compare-tag_EXISTS == '0'
     uses: actions/github-script@v7
     with:
       script: |
         github.rest.git.createRef({
           owner: context.repo.owner,
           repo: context.repo.repo,
-          ref: "refs/tags/${{ inputs.compare_tag }}",
+          ref: "refs/tags/${{ inputs.compare-tag }}",
           sha: "${{ env.BASE_SHA }}"
         })
   - id: get_changed_directories
     name: get changed directories
     shell: bash
     run: |
-      printf directories=$(git diff --name-only origin/${{ inputs.base_branch }} ${{ github.sha }} | $GITHUB_ACTION_PATH/scripts/get_changed_directories.sh "${{ inputs.base_path }}" "${{ inputs.include }}" "${{ inputs.exclude }}" "${{ inputs.include_hidden }}") >> $GITHUB_OUTPUT
+      printf directories=$(git diff --name-only origin/${{ inputs.base-branch }} ${{ github.sha }} | $GITHUB_ACTION_PATH/scripts/get_changed_directories.sh "${{ inputs.base_path }}" "${{ inputs.include }}" "${{ inputs.exclude }}" "${{ inputs.include-hidden }}") >> $GITHUB_OUTPUT
 
