@@ -25,7 +25,6 @@ jobs:
     strategy: 
       matrix:
         directory: ${{ fromJson(needs.evaluate-changed-items.outputs.directories) }}
-        name: ${{ fromJson(needs.evaluate-changed-items.outputs.names) }}
 
     defaults:
       run:
@@ -43,7 +42,7 @@ jobs:
       uses: hashibuto/github-actions/version-check@test
       with:
         path-prefix: ${{ matrix.directory }}
-        tag-prefix: ${{ matrix.name }}
+        tag-prefix: ${{ matrix.directory }}_
 
     - name: Execute tests
       shell: bash
