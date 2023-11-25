@@ -1,0 +1,20 @@
+name: login to docker container registry
+description: creates a local login on runner for a private docker container registry
+inputs:
+  registry:
+    description: registry domain name
+    default: ""
+  username:
+    description: login username
+    default: ""
+  password:
+    description: login password
+    default: ""
+runs:
+  using: composite
+  steps:
+  - id: login_to_registry
+    shell: bash
+    run: |
+      set -x
+      docker login ${{ inputs.registry }} -u ${{ inputs.username }} -p ${{ inputs.password }}
