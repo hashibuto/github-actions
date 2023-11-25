@@ -41,7 +41,6 @@ runs:
       else
         echo is-merged=false >> $GITHUB_OUTPUT
       fi
-    
   - name: ensure existance of compare tag
     shell: bash
     run: |
