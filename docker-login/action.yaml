@@ -16,5 +16,5 @@ runs:
   - id: login_to_registry
     shell: bash
     run: |
-      set -x
-      docker login ${{ inputs.registry }} -u ${{ inputs.username }} -p ${{ inputs.password }}
+      set +x
+      echo ${{ inputs.password }} | docker login ${{ inputs.registry }} -u ${{ inputs.username }} --password-stdin
