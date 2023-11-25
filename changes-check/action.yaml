@@ -16,7 +16,7 @@ inputs:
   base-branch:
     description: base branch against which to compare current revision
     default: main
-  compare-tag: 
+  compare-tag:
     description: tag against which to compare current revision
     default: base
 outputs:
@@ -65,6 +65,11 @@ runs:
           ref: "refs/tags/${{ inputs.compare-tag }}",
           sha: "${{ env.BASE_SHA }}"
         })
+  - name: pull newly created tag
+    if: env.COMPARE_TAG_EXISTS == '0'
+    uses: actions/checkout@v4
+    with:
+      fetch-depth: 0
   - id: get_changed_directories
     name: get changed directories
     shell: bash
