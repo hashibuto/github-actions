@@ -18,7 +18,7 @@ jobs:
       with:
         fetch-depth: 0
     - id: check-changes
-      uses: hashibuto/github-actions/changes-check@test
+      uses: hashibuto/github-actions/changes-check@changes-check_v0
       with:
         base-branch: master
 
@@ -52,7 +52,7 @@ jobs:
     - id: tag-release-version
       name: Tag release version
       if: ${{ needs.evaluate-changed-items.outputs.is-merged == 'true' }}
-      uses: hashibuto/github-actions/version-check@test
+      uses: hashibuto/github-actions/version-check@version-check_v0
       with:
         path-prefix: ${{ matrix.directory }}
         tag-prefix: ${{ matrix.directory }}_
