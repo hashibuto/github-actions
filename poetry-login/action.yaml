@@ -1,0 +1,20 @@
+name: prepare credentials for poetry
+description: prepares credentials for poetry to push/pull to/from a private package registry
+inputs:
+  name:
+    description: repository name
+    default: ""
+  username:
+    description: login username
+    default: ""
+  password:
+    description: login password
+    default: ""
+runs:
+  using: composite
+  steps:
+  - id: login_to_registry
+    shell: bash
+    run: |
+      set +x
+      poetry config http-basic.${{ inputs.name }} ${{ inputs.username }} ${{ inputs.password }}
