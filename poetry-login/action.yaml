@@ -4,6 +4,9 @@ inputs:
   name:
     description: repository name
     default: ""
+  repository:
+    description: repository url
+    default: ""
   username:
     description: login username
     default: ""
@@ -17,4 +20,5 @@ runs:
     shell: bash
     run: |
       set +x
+      poetry config repositories.${{ inputs.name }} ${{ inputs.repository }}
       poetry config http-basic.${{ inputs.name }} ${{ inputs.username }} ${{ inputs.password }}
