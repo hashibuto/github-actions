@@ -21,4 +21,4 @@ runs:
     run: |
       set +x
       poetry config repositories.${{ inputs.name }} ${{ inputs.repository }}
-      poetry config http-basic.${{ inputs.name }} ${{ inputs.username }} ${{ inputs.password }}
+      poetry config http-basic.${{ inputs.name }} ${{ inputs.username }} "${{ inputs.password }}"

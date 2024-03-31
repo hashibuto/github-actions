@@ -17,4 +17,4 @@ runs:
     shell: bash
     run: |
       set +x
-      echo ${{ inputs.password }} | docker login ${{ inputs.registry }} -u ${{ inputs.username }} --password-stdin
+      echo "${{ inputs.password }}" | docker login ${{ inputs.registry }} -u ${{ inputs.username }} --password-stdin
