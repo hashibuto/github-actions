@@ -1,14 +1,8 @@
 name: prepare credentials for poetry
 description: prepares credentials for poetry to push/pull to/from a private package registry
 inputs:
-  name:
-    description: repository name
-    default: ""
-  username:
-    description: login username
-    default: ""
-  password:
-    description: login password
+  token:
+    description: api token
     default: ""
 runs:
   using: composite
@@ -17,4 +11,4 @@ runs:
     shell: bash
     run: |
       set +x
-      poetry config http-basic.${{ inputs.name }} ${{ inputs.username }} "${{ inputs.password }}"
+      poetry config pypi-token.pypi ${{ inputs.token }}
